@@ -2,13 +2,13 @@ import sys
 from Net import Net
 
 def node_input(non_unique_list):
-    nodes_list = []
-    for number in non_unique_list:
-        if any(x.node == number for x in nodes_list):
-            net = Net()
-            net.node = number
-            nodes_list.append(net)
-    return nodes_list
+    unique_list = set(non_unique_list)
+    size = len(unique_list)
+    net_list = [Net() for i in range(size)]
+    for number, net in zip(unique_list, net_list):
+        net.node = number
+
+    return sorted(net_list, key=lambda net: net.node)
 
 def unique(non_unique_list):
     return len(set(non_unique_list))
@@ -26,8 +26,8 @@ for line in file:
     purchase_date.append(line[2])
 
 left_node_number = unique(link_left)
-print(left_node_number)
 left = node_input(link_left)
+print(left_node_number)
 right_node_number = unique(link_right)
-print(right_node_number)
 right = node_input(link_right)
+print(right_node_number)
