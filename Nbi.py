@@ -79,46 +79,46 @@ right = node_input(link_right)
 #right_node_number = len(right)
 
 #tests
-# a = open('test_link_left.txt', 'w')
-# for line in link_left:
-#     a.write(line)
-#     a.write('\n')
-#
-# b = open('test_left.txt', 'w')
-# for line in left:
-#     b.write(line.node)
-#     b.write('\n')
-#
-# c = open('test_link_right.txt', 'w')
-# for line in link_right:
-#     c.write(line)
-#     c.write('\n')
-#
-# d = open('test_right.txt', 'w')
-# for line in right:
-#     d.write(line.node)
-#     d.write('\n')
+a = open('test_link_left.txt', 'w')
+for line in link_left:
+    a.write(str(line))
+    a.write('\n')
+
+b = open('test_left.txt', 'w')
+for line in left:
+    b.write(str(line.node))
+    b.write('\n')
+
+c = open('test_link_right.txt', 'w')
+for line in link_right:
+    c.write(str(line))
+    c.write('\n')
+
+d = open('test_right.txt', 'w')
+for line in right:
+    d.write(str(line.node))
+    d.write('\n')
 
 network_making(link_left, link_right, left, right)
 
-# e = open('test_left_after_network_making.txt', 'w')
-# for line in left:
-#     e.write(str(line.degree))
-#     e.write('\n')
-#
-# f = open('test_right_after_network_making.txt', 'w')
-# for line in right:
-#     f.write(str(line.degree))
-#     f.write('\n')
+e = open('test_left_network_making.txt', 'w')
+for line in left:
+    e.write(str(line.degree))
+    e.write('\n')
+
+f = open('test_right_network_making.txt', 'w')
+for line in right:
+    f.write(str(line.degree))
+    f.write('\n')
 
 heat_diffusion(right, left)
 
-g = open('test_left_after_heat_diffusion.txt', 'w')
+g = open('test_left_heat_diffusion.txt', 'w')
 for line in left:
     g.write(str(line.value))
     g.write('\n')
 
-h = open('test_right_after_heat_diffusion.txt', 'w')
+h = open('test_right_heat_diffusion.txt', 'w')
 for line in right:
     h.write(str(line.value))
     h.write('\n')
