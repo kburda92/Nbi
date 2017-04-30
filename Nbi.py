@@ -1,15 +1,38 @@
 import sys
 from Net import Net
 
+def heat_diffusion(center, proj):
+    for c in center:
+        for d in range(0, c.degree):
+            index = BinarySearch(proj, int(c.neighbor[d]))
+            c.value += (proj[index].degree - 1)
+
+    for c in center:
+        for d in range(0, c.degree):
+            index = BinarySearch(proj, int(c.neighbor[d]))
+            proj[index].value += (c.value / c.degree)
+
+    for c in center:
+        c.value = 0
+
+    for p in proj:
+        for d in range(0, p.degree):
+            index = BinarySearch(center, int(p.neighbor[d]))
+            center[index].value += (p.value / p.degree)
+
+    for p in proj:
+        p.value = 0
+
+
 def BinarySearch(ar, key):
     Lower = 0
     Upper = len(ar) - 1
 
     while True:
         Mid = int((Upper + Lower) / 2)
-        if ar[Mid].node == key :
+        if int(ar[Mid].node) == key:
             return Mid
-        if ar[Mid].node > key:
+        if int(ar[Mid].node) > key:
             Upper = Mid - 1
         else:
             Lower = Mid + 1
@@ -18,15 +41,17 @@ def BinarySearch(ar, key):
 
 def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
-    link_number = len(link_left)
 
-    for i in range(0, link_number):
-        net_index = BinarySearch(left, link_left[i]);
-        left[net_index].neighbor.append(link_right[i]);
+    for link_l, link_r in zip(link_left, link_right):
+        link_l = int(link_l)
+        link_r = int(link_r)
+        net_index = BinarySearch(left, link_l);
+        left[net_index].neighbor.append(link_r);
+        left[net_index].degree += 1
 
-        net_index = BinarySearch(right, link_right[i]);
-        right[net_index].neighbor.append(link_left[i]);
-
+        net_index = BinarySearch(right, link_r);
+        right[net_index].neighbor.append(link_l);
+        right[net_index].degree += 1
 
 def node_input(non_unique_list):
     unique_list = set(non_unique_list)
@@ -77,3 +102,25 @@ right = node_input(link_right)
 #     d.write('\n')
 
 network_making(link_left, link_right, left, right)
+
+# e = open('test_left_after_network_making.txt', 'w')
+# for line in left:
+#     e.write(str(line.degree))
+#     e.write('\n')
+#
+# f = open('test_right_after_network_making.txt', 'w')
+# for line in right:
+#     f.write(str(line.degree))
+#     f.write('\n')
+
+heat_diffusion(right, left)
+
+g = open('test_left_after_heat_diffusion.txt', 'w')
+for line in left:
+    g.write(str(line.value))
+    g.write('\n')
+
+h = open('test_right_after_heat_diffusion.txt', 'w')
+for line in right:
+    h.write(str(line.value))
+    h.write('\n')
