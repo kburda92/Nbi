@@ -4,12 +4,12 @@ from Net import Net
 def heat_diffusion(center, proj):
     for c in center:
         for d in range(0, c.degree):
-            index = BinarySearch(proj, int(c.neighbor[d]))
+            index = BinarySearch(proj, c.neighbor[d])
             c.value += (proj[index].degree - 1)
 
     for c in center:
         for d in range(0, c.degree):
-            index = BinarySearch(proj, int(c.neighbor[d]))
+            index = BinarySearch(proj, c.neighbor[d])
             proj[index].value += (c.value / c.degree)
 
     for c in center:
@@ -17,7 +17,7 @@ def heat_diffusion(center, proj):
 
     for p in proj:
         for d in range(0, p.degree):
-            index = BinarySearch(center, int(p.neighbor[d]))
+            index = BinarySearch(center, p.neighbor[d])
             center[index].value += (p.value / p.degree)
 
     for p in proj:
@@ -30,9 +30,9 @@ def BinarySearch(ar, key):
 
     while True:
         Mid = int((Upper + Lower) / 2)
-        if int(ar[Mid].node) == key:
+        if ar[Mid].node == key:
             return Mid
-        if int(ar[Mid].node) > key:
+        if ar[Mid].node > key:
             Upper = Mid - 1
         else:
             Lower = Mid + 1
@@ -43,8 +43,6 @@ def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
 
     for link_l, link_r in zip(link_left, link_right):
-        link_l = int(link_l)
-        link_r = int(link_r)
         net_index = BinarySearch(left, link_l);
         left[net_index].neighbor.append(link_r);
         left[net_index].degree += 1
@@ -59,7 +57,7 @@ def node_input(non_unique_list):
     net_list = [Net() for i in range(size)]
     for number, net in zip(unique_list, net_list):
         net.node = number
-    return sorted(net_list, key=lambda net: int(net.node))
+    return sorted(net_list, key=lambda net: net.node)
 
 
 number_recommend=sys.argv[1] if len(sys.argv) > 1 else 0
@@ -70,9 +68,9 @@ link_right = []
 purchase_date = []
 for line in file:
     line = line.split()
-    link_left.append(line[0])
-    link_right.append(line[1])
-    purchase_date.append(line[2])
+    link_left.append(int(line[0]))
+    link_right.append(int(line[1]))
+    purchase_date.append(int(line[2]))
 
 left = node_input(link_left)
 right = node_input(link_right)
