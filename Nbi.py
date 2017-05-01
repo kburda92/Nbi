@@ -3,13 +3,13 @@ from Net import Net
 
 
 def input_for_check(direction):
-    file = open('check.txt', 'r')
     link_left, link_right, purchase_date = [], [], []
-    for line in file:
-        line = line.split()
-        link_left.append(int(line[0]))
-        link_right.append(int(line[1]))
-        # purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
+    with open('check.txt', 'r') as file:
+        for line in file:
+            line = line.split()
+            link_left.append(int(line[0]))
+            link_right.append(int(line[1]))
+            # purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
 
     left = node_input(link_left)
     right = node_input(link_right)
@@ -170,15 +170,15 @@ def node_input(non_unique_list):
         net.node = number
     return sorted(net_list, key=lambda net: net.node)
 
-number_recommend=int(sys.argv[1]) if len(sys.argv) > 1 else 0
+number_recommend = int(sys.argv[1]) if len(sys.argv) > 1 else 0
 
-file = open('training.txt', 'r')
 link_left, link_right, purchase_date = [], [], []
-for line in file:
-    line = line.split()
-    link_left.append(int(line[0]))
-    link_right.append(int(line[1]))
-    #purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
+with open('training.txt', 'r') as file:
+    for line in file:
+        line = line.split()
+        link_left.append(int(line[0]))
+        link_right.append(int(line[1]))
+        #purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
 
 left = node_input(link_left)
 right = node_input(link_right)
