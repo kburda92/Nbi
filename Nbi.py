@@ -1,5 +1,6 @@
 import sys
 from Net import Net
+from bisect import bisect_left
 
 
 def input_for_check(direction):
@@ -41,7 +42,7 @@ def recommendation(user, item_rank):
             recommend_table[idx[k]] = 0
             length += 1
 
-        k = binary_search(check, u.node)
+        k = binary_search_raw([n.node for n in check], u.node)
         if k != -1:
             for i in range(0, check[k].degree):
                 l = binary_search_raw(rank_seq, check[k].neighbor[i])
@@ -95,80 +96,61 @@ def ranking(list):
 
 
 def heat_diffusion(center, proj):
+    center_nodes = [n.node for n in center]
+    proj_nodes = [n.node for n in proj]
+    indexes = []
     for c in center:
         for d in range(0, c.degree):
-            index = binary_search(proj, c.neighbor[d])
-            c.value += (proj[index].degree - 1)
+            indexes.append(binary_search_raw(proj_nodes, c.neighbor[d]))
+            c.value += (proj[indexes[-1]].degree - 1)
 
+    i = 0
     for c in center:
         for d in range(0, c.degree):
-            index = binary_search(proj, c.neighbor[d])
-            proj[index].value += (c.value / c.degree)
+            proj[indexes[i]].value += (c.value / c.degree)
+            i += 1
 
     for c in center:
         c.value = 0
 
     for p in proj:
         for d in range(0, p.degree):
-            index = binary_search(center, p.neighbor[d])
+            index = binary_search_raw(center_nodes, p.neighbor[d])
             center[index].value += (p.value / p.degree)
 
     for p in proj:
         p.value = 0
 
 
-def binary_search(ar, key):
-    Lower = 0
-    Upper = len(ar) - 1
-
-    while True:
-        Mid = int((Upper + Lower) / 2)
-        if ar[Mid].node == key:
-            return Mid
-        if ar[Mid].node > key:
-            Upper = Mid - 1
-        else:
-            Lower = Mid + 1
-        if Upper < Lower:
-            return -1
-
-
 def binary_search_raw(ar, key):
-    Lower = 0
-    Upper = len(ar) - 1
-
-    while True:
-        Mid = int((Upper + Lower) / 2)
-        if ar[Mid] == key:
-            return Mid
-        if ar[Mid] > key:
-            Upper = Mid - 1
-        else:
-            Lower = Mid + 1
-        if Upper < Lower:
-            return -1
+    index = bisect_left(ar, key)
+    if index != len(ar) and ar[index] == key:
+        return index
+    return -1
 
 
 def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
 
+    left_nodes = [n.node for n in left]
+    right_nodes = [n.node for n in right]
+
     for link_l, link_r in zip(link_left, link_right):
-        net_index = binary_search(left, link_l)
+        net_index = binary_search_raw(left_nodes, link_l)
         left[net_index].neighbor.append(link_r)
         left[net_index].degree += 1
 
-        net_index = binary_search(right, link_r)
+        net_index = binary_search_raw(right_nodes, link_r)
         right[net_index].neighbor.append(link_l)
         right[net_index].degree += 1
 
 
 def node_input(non_unique_list):
     unique_list = set(non_unique_list)
-    size = len(unique_list)
-    net_list = [Net() for i in range(size)]
-    for number, net in zip(unique_list, net_list):
-        net.node = number
-    return sorted(net_list, key=lambda net: net.node)
+    net_list = []
+    for number in unique_list:
+        net_list.append(Net(number))
+    return sorted(net_list)
 
 number_recommend = int(sys.argv[1]) if len(sys.argv) > 1 else 0
 
