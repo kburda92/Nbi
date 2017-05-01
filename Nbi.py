@@ -1,21 +1,13 @@
 import sys
 from Net import Net
 
-def QuickSort_dual(ar1, ar2, num):
+def QuickSort_dual(ar1, ar2, begin, num):
     if num <= 1:
         return
-    z.write(str(ar1[0]))
-    z.write('\n')
-    z.write('%.10f' % (ar2[0]))
-    z.write('\n')
-    z.write(str(num))
-    z.write('\n')
-    z.write('-----------')
-    z.write('\n')
 
-    key = ar2[num-1]
-    left = 0
-    right = num - 2
+    key = ar2[begin + num-1]
+    left = begin
+    right = begin + num - 2
     while True:
         while ar2[left] < key:
             left += 1
@@ -28,11 +20,12 @@ def QuickSort_dual(ar1, ar2, num):
         left += 1
         right -= 1
 
-    ar1[left], ar1[num - 1] = ar1[num - 1], int(ar1[left])
-    ar2[left], ar2[num - 1] = ar2[num - 1], int(ar2[left])
+    ar1[left], ar1[begin + num - 1] = ar1[begin + num - 1], int(ar1[left])
+    ar2[left], ar2[begin + num - 1] = ar2[begin + num - 1], int(ar2[left])
 
-    QuickSort_dual(ar1[:left], ar2[:left], left);
-    QuickSort_dual(ar1[left + 1:], ar2[left + 1:], num - left - 1);
+    QuickSort_dual(ar1, ar2, begin, left - begin);
+    QuickSort_dual(ar1, ar2, left + 1, num - left + begin - 1);
+
 
 def ranking(list):
     id, value = [], []
@@ -41,8 +34,7 @@ def ranking(list):
         id.append(l.node)
         value.append(l.value)
 
-    QuickSort_dual(id, value, len(id))
-
+    QuickSort_dual(id, value, 0, len(id))
     return id;
 
 def heat_diffusion(center, proj):
@@ -162,7 +154,6 @@ for line in right:
     g.write('%.10f' % (line.value))
     g.write('\n')
 
-z = open('test_QuickSort_dual.txt', 'w')
 item_rank = ranking(right)
 
 h = open('test_right_ranking.txt', 'w')
