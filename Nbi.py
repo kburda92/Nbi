@@ -1,6 +1,7 @@
 import sys
 from Net import Net
 
+
 def input_for_check(direction):
     file = open('check.txt', 'r')
     link_left, link_right, purchase_date = [], [], []
@@ -8,49 +9,42 @@ def input_for_check(direction):
         line = line.split()
         link_left.append(int(line[0]))
         link_right.append(int(line[1]))
-        purchase_date.append(int(line[2]))
+        # purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
 
     left = node_input(link_left)
     right = node_input(link_right)
 
     network_making(link_left, link_right, left, right)
-
     size_check = len(left)
     ret_list = right if direction else left
     return ret_list, size_check
 
+
 def recommendation(user, item_rank):
     expect_collect = 0
-    idx, rank_seq, rank_temp = [], [], []
+    idx = list(range(0, len(item_rank)))
 
-    check, size_check = input_for_check(0);
-
+    check, size_check = input_for_check(0)
     result = open('result.txt', 'w')
 
-    for i in range(0, len(item_rank)):
-        idx.append(i)
-        rank_temp.append(item_rank[i])
+    rank_temp = item_rank[:]
 
-    QuickSort_dual(idx, rank_temp, len(item_rank))
-
-    for temp in rank_temp:
-        rank_seq.append(temp)
+    quick_sort_dual(idx, rank_temp, len(item_rank))
+    rank_seq = rank_temp[:]
 
     for u in user:
-        recommend_table = []
         length = number_recommend
-        for rank in item_rank:
-            recommend_table.append(rank)
+        recommend_table = item_rank[:]
 
         for i in range(0, u.degree):
-            k = BinarySearch_raw(rank_seq, u.neighbor[i])
+            k = binary_search_raw(rank_seq, u.neighbor[i])
             recommend_table[idx[k]] = 0
             length += 1
 
-        k = BinarySearch(check, u.node)
+        k = binary_search(check, u.node)
         if k != -1:
             for i in range(0, check[k].degree):
-                l = BinarySearch_raw(rank_seq, check[k].neighbor[i]);
+                l = binary_search_raw(rank_seq, check[k].neighbor[i]);
                 if l != -1 and idx[l] < length and recommend_table[idx[l]]:
                     expect_collect += 1
 
@@ -62,7 +56,8 @@ def recommendation(user, item_rank):
 
     print("%s\t%s\n" % (number_recommend, expect_collect))
 
-def QuickSort_dual(ar1, ar2, num, begin = 0):
+
+def quick_sort_dual(ar1, ar2, num, begin = 0):
     if num <= 1:
         return
 
@@ -84,8 +79,9 @@ def QuickSort_dual(ar1, ar2, num, begin = 0):
     ar1[left], ar1[begin + num - 1] = ar1[begin + num - 1], int(ar1[left])
     ar2[left], ar2[begin + num - 1] = ar2[begin + num - 1], int(ar2[left])
 
-    QuickSort_dual(ar1, ar2, left - begin, begin);
-    QuickSort_dual(ar1, ar2, num - left + begin - 1, left + 1,);
+    quick_sort_dual(ar1, ar2, left - begin, begin);
+    quick_sort_dual(ar1, ar2, num - left + begin - 1, left + 1,);
+
 
 def ranking(list):
     id, value = [], []
@@ -94,18 +90,19 @@ def ranking(list):
         id.append(l.node)
         value.append(l.value)
 
-    QuickSort_dual(id, value, len(id))
+    quick_sort_dual(id, value, len(id))
     return id;
+
 
 def heat_diffusion(center, proj):
     for c in center:
         for d in range(0, c.degree):
-            index = BinarySearch(proj, c.neighbor[d])
+            index = binary_search(proj, c.neighbor[d])
             c.value += (proj[index].degree - 1)
 
     for c in center:
         for d in range(0, c.degree):
-            index = BinarySearch(proj, c.neighbor[d])
+            index = binary_search(proj, c.neighbor[d])
             proj[index].value += (c.value / c.degree)
 
     for c in center:
@@ -113,13 +110,14 @@ def heat_diffusion(center, proj):
 
     for p in proj:
         for d in range(0, p.degree):
-            index = BinarySearch(center, p.neighbor[d])
+            index = binary_search(center, p.neighbor[d])
             center[index].value += (p.value / p.degree)
 
     for p in proj:
         p.value = 0
 
-def BinarySearch(ar, key):
+
+def binary_search(ar, key):
     Lower = 0
     Upper = len(ar) - 1
 
@@ -134,7 +132,8 @@ def BinarySearch(ar, key):
         if Upper < Lower:
             return -1
 
-def BinarySearch_raw(ar, key):
+
+def binary_search_raw(ar, key):
     Lower = 0
     Upper = len(ar) - 1
 
@@ -149,17 +148,19 @@ def BinarySearch_raw(ar, key):
         if Upper < Lower:
             return -1
 
+
 def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
 
     for link_l, link_r in zip(link_left, link_right):
-        net_index = BinarySearch(left, link_l);
+        net_index = binary_search(left, link_l);
         left[net_index].neighbor.append(link_r);
         left[net_index].degree += 1
 
-        net_index = BinarySearch(right, link_r);
+        net_index = binary_search(right, link_r);
         right[net_index].neighbor.append(link_l);
         right[net_index].degree += 1
+
 
 def node_input(non_unique_list):
     unique_list = set(non_unique_list)
@@ -177,7 +178,7 @@ for line in file:
     line = line.split()
     link_left.append(int(line[0]))
     link_right.append(int(line[1]))
-    purchase_date.append(int(line[2]))
+    #purchase_date.append(int(line[2])) #in original C file parameter is passed to network_making but is not used
 
 left = node_input(link_left)
 right = node_input(link_right)
