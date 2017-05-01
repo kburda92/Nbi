@@ -44,7 +44,7 @@ def recommendation(user, item_rank):
         k = binary_search(check, u.node)
         if k != -1:
             for i in range(0, check[k].degree):
-                l = binary_search_raw(rank_seq, check[k].neighbor[i]);
+                l = binary_search_raw(rank_seq, check[k].neighbor[i])
                 if l != -1 and idx[l] < length and recommend_table[idx[l]]:
                     expect_collect += 1
 
@@ -79,8 +79,8 @@ def quick_sort_dual(ar1, ar2, num, begin = 0):
     ar1[left], ar1[begin + num - 1] = ar1[begin + num - 1], int(ar1[left])
     ar2[left], ar2[begin + num - 1] = ar2[begin + num - 1], int(ar2[left])
 
-    quick_sort_dual(ar1, ar2, left - begin, begin);
-    quick_sort_dual(ar1, ar2, num - left + begin - 1, left + 1,);
+    quick_sort_dual(ar1, ar2, left - begin, begin)
+    quick_sort_dual(ar1, ar2, num - left + begin - 1, left + 1,)
 
 
 def ranking(list):
@@ -91,7 +91,7 @@ def ranking(list):
         value.append(l.value)
 
     quick_sort_dual(id, value, len(id))
-    return id;
+    return id
 
 
 def heat_diffusion(center, proj):
@@ -153,12 +153,12 @@ def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
 
     for link_l, link_r in zip(link_left, link_right):
-        net_index = binary_search(left, link_l);
-        left[net_index].neighbor.append(link_r);
+        net_index = binary_search(left, link_l)
+        left[net_index].neighbor.append(link_r)
         left[net_index].degree += 1
 
-        net_index = binary_search(right, link_r);
-        right[net_index].neighbor.append(link_l);
+        net_index = binary_search(right, link_r)
+        right[net_index].neighbor.append(link_l)
         right[net_index].degree += 1
 
 
@@ -186,4 +186,4 @@ right = node_input(link_right)
 network_making(link_left, link_right, left, right)
 heat_diffusion(right, left)
 item_rank = ranking(right)
-recommendation(left, item_rank);
+recommendation(left, item_rank)
