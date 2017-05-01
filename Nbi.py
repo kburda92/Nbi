@@ -1,7 +1,7 @@
 import sys
 from Net import Net
 
-def input_for_check(size_check, direction):
+def input_for_check(direction):
     file = open('check.txt', 'r')
     link_left, link_right, purchase_date = [], [], []
     for line in file:
@@ -16,32 +16,22 @@ def input_for_check(size_check, direction):
     network_making(link_left, link_right, left, right)
 
     size_check = len(left)
-    return right if direction else left
+    ret_list = right if direction else left
+    return ret_list, size_check
 
 def recommendation(user, item_rank):
-    user_n = len(user)
-    rank_n = len(item_rank)
     expect_collect = 0
-    size_check = 0
     idx, rank_seq, rank_temp = [], [], []
 
-    check = input_for_check(size_check, 0);
+    check, size_check = input_for_check(0);
 
     result = open('result.txt', 'w')
 
-    for i in range(0, rank_n):
+    for i in range(0, len(item_rank)):
         idx.append(i)
         rank_temp.append(item_rank[i])
 
-    QuickSort_dual(idx, rank_temp, rank_n)
-
-    z1 = open('test_id_recommendation.txt', 'w')
-    for c in idx:
-        z1.write(str(c) + '\n')
-
-    z2 = open('test_rank_temp_recommendation.txt', 'w')
-    for c in rank_temp:
-        z2.write(str(c) + '\n')
+    QuickSort_dual(idx, rank_temp, len(item_rank))
 
     for temp in rank_temp:
         rank_seq.append(temp)
@@ -97,7 +87,6 @@ def QuickSort_dual(ar1, ar2, num, begin = 0):
     QuickSort_dual(ar1, ar2, left - begin, begin);
     QuickSort_dual(ar1, ar2, num - left + begin - 1, left + 1,);
 
-
 def ranking(list):
     id, value = [], []
 
@@ -130,7 +119,6 @@ def heat_diffusion(center, proj):
     for p in proj:
         p.value = 0
 
-
 def BinarySearch(ar, key):
     Lower = 0
     Upper = len(ar) - 1
@@ -161,7 +149,6 @@ def BinarySearch_raw(ar, key):
         if Upper < Lower:
             return -1
 
-
 def network_making(link_left, link_right, left, right):
     assert len(link_left) == len(link_right)
 
@@ -182,8 +169,7 @@ def node_input(non_unique_list):
         net.node = number
     return sorted(net_list, key=lambda net: net.node)
 
-
-number_recommend=sys.argv[1] if len(sys.argv) > 1 else 0
+number_recommend=int(sys.argv[1]) if len(sys.argv) > 1 else 0
 
 file = open('training.txt', 'r')
 link_left, link_right, purchase_date = [], [], []
@@ -196,44 +182,7 @@ for line in file:
 left = node_input(link_left)
 right = node_input(link_right)
 
-#tests
-a = open('test_link_left.txt', 'w')
-for line in link_left:
-    a.write(str(line) + '\n')
-
-b = open('test_left.txt', 'w')
-for line in left:
-    b.write(str(line.node) + '\n')
-
-c = open('test_link_right.txt', 'w')
-for line in link_right:
-    c.write(str(line))
-    c.write('\n')
-
-d = open('test_right.txt', 'w')
-for line in right:
-    d.write(str(line.node) + '\n')
-
 network_making(link_left, link_right, left, right)
-
-e = open('test_left_network_making.txt', 'w')
-for line in left:
-    e.write(str(line.degree) + '\n')
-
-f = open('test_right_network_making.txt', 'w')
-for line in right:
-    f.write(str(line.degree) + '\n')
-
 heat_diffusion(right, left)
-
-g = open('test_right_heat_diffusion.txt', 'w')
-for line in right:
-    g.write('%.10f\n' % (line.value))
-
 item_rank = ranking(right)
-
-h = open('test_right_ranking.txt', 'w')
-for item in item_rank:
-    h.write(str(item) + '\n')
-
 recommendation(left, item_rank);
